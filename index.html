@@ -20,8 +20,9 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 98%;
             margin: 0 auto;
+            padding: 0 10px;
         }
 
         .header {
@@ -169,12 +170,13 @@
             border: 1px solid rgba(77, 159, 255, 0.2);
             border-radius: 15px;
             padding: 20px;
+            max-width: 100%;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1600px;
+            font-size: 0.85em;
         }
 
         thead {
@@ -182,18 +184,21 @@
         }
 
         th {
-            padding: 15px 10px;
+            padding: 12px 8px;
             text-align: left;
             color: #4d9fff;
             font-weight: 600;
             border-bottom: 2px solid #4d9fff;
             white-space: nowrap;
+            font-size: 0.9em;
         }
 
         td {
-            padding: 12px 10px;
+            padding: 10px 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #ddd;
+            white-space: nowrap;
+            font-size: 0.9em;
         }
 
         tr:hover {
@@ -207,14 +212,30 @@
             font-size: 1.1em;
         }
 
+        .edit-btn {
+            background: linear-gradient(135deg, #4488ff, #0066cc);
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(68, 136, 255, 0.5);
+        }
+
         .delete-btn {
             background: linear-gradient(135deg, #ff4444, #cc0000);
             color: #fff;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.8em;
             transition: all 0.3s ease;
             margin-right: 5px;
         }
@@ -224,20 +245,30 @@
             box-shadow: 0 2px 10px rgba(255, 68, 68, 0.5);
         }
 
-        .edit-btn {
-            background: linear-gradient(135deg, #4488ff, #0066cc);
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
+        @media screen and (max-width: 1400px) {
+            table {
+                font-size: 0.75em;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.85em;
+            }
+            
+            .edit-btn, .delete-btn {
+                padding: 4px 8px;
+                font-size: 0.75em;
+            }
         }
 
-        .edit-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 10px rgba(68, 136, 255, 0.5);
+        @media screen and (max-width: 1024px) {
+            table {
+                font-size: 0.7em;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
         }
 
         .long {
@@ -597,7 +628,25 @@
             const trade = trades[index];
             
             document.getElementById('luna').value = trade.luna || '';
-            document.getElementById('data').value = trade.data || '';
+            
+            // Convertește data la formatul YYYY-MM-DD pentru input type="date"
+            let dateValue = trade.data || '';
+            if (dateValue && typeof dateValue === 'object' && dateValue.toISOString) {
+                // Dacă e un obiect Date
+                dateValue = dateValue.toISOString().split('T')[0];
+            } else if (dateValue && typeof dateValue === 'string') {
+                // Dacă e string, încearcă să-l convertești
+                const dateParts = dateValue.split('/');
+                if (dateParts.length === 3) {
+                    // Format DD/MM/YYYY sau MM/DD/YYYY
+                    const day = dateParts[0].padStart(2, '0');
+                    const month = dateParts[1].padStart(2, '0');
+                    const year = dateParts[2];
+                    dateValue = year + '-' + month + '-' + day;
+                }
+            }
+            document.getElementById('data').value = dateValue;
+            
             document.getElementById('zi').value = trade.zi || '';
             document.getElementById('pereche').value = trade.pereche || '';
             document.getElementById('sesiune').value = trade.sesiune || '';
@@ -696,15 +745,38 @@
 
         function updateTradeInSheet(trade) {
             if (isLoading) return;
+            
+            // Verifică că ID-ul există
+            if (!trade.id) {
+                alert('Eroare: ID-ul tranzacției lipsește. Nu se poate actualiza.');
+                return;
+            }
+            
             isLoading = true;
             saveBtn.disabled = true;
             saveBtn.textContent = 'Se actualizează...';
             
             const params = new URLSearchParams();
             params.append('action', 'update');
-            Object.keys(trade).forEach(function(key) {
-                params.append(key, trade[key]);
-            });
+            params.append('id', trade.id);
+            params.append('luna', trade.luna);
+            params.append('data', trade.data);
+            params.append('zi', trade.zi);
+            params.append('pereche', trade.pereche);
+            params.append('sesiune', trade.sesiune);
+            params.append('position', trade.position);
+            params.append('wl', trade.wl || '');
+            params.append('r', trade.r || '');
+            params.append('risk', trade.risk);
+            params.append('profit', trade.profit || '');
+            params.append('tv', trade.tv || '');
+            params.append('entry', trade.entry || '');
+            params.append('entryHour', trade.entryHour || '');
+            params.append('exitHour', trade.exitHour || '');
+            params.append('duration', trade.duration || '');
+            params.append('sl', trade.sl || '');
+            params.append('tp', trade.tp || '');
+            params.append('pips', trade.pips || '');
             
             fetch(GOOGLE_SCRIPT_URL + '?' + params.toString())
                 .then(function(response) {
@@ -721,7 +793,7 @@
                         showPage('table');
                         loadTradesFromSheet();
                     } else {
-                        alert('Eroare la actualizare: ' + data.message);
+                        alert('Eroare la actualizare: ' + data.message + '\nID căutat: ' + trade.id);
                     }
                 })
                 .catch(function(error) {
