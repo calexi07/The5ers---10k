@@ -13,14 +13,14 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f2e1a 100%);
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 50%, #0f1e3a 100%);
             color: #fff;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -28,12 +28,12 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 30px 0;
-            border-bottom: 2px solid #00ff88;
+            border-bottom: 2px solid #4d9fff;
         }
 
         .header h1 {
             font-size: 2.5em;
-            background: linear-gradient(90deg, #00ff88, #00cc88);
+            background: linear-gradient(90deg, #4d9fff, #3d7fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -51,8 +51,8 @@
         }
 
         .nav-btn {
-            background: linear-gradient(135deg, #00ff88, #00cc66);
-            color: #000;
+            background: linear-gradient(135deg, #4d9fff, #3d7fff);
+            color: #fff;
             border: none;
             padding: 12px 30px;
             margin: 0 10px;
@@ -61,16 +61,17 @@
             font-size: 1em;
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 4px 15px rgba(77, 159, 255, 0.3);
         }
 
         .nav-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 6px 20px rgba(77, 159, 255, 0.5);
         }
 
         .nav-btn.active {
             background: linear-gradient(135deg, #fff, #e0e0e0);
+            color: #000;
         }
 
         .page {
@@ -90,7 +91,7 @@
         .form-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(77, 159, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -109,7 +110,7 @@
         }
 
         label {
-            color: #00ff88;
+            color: #4d9fff;
             margin-bottom: 8px;
             font-weight: 500;
             font-size: 0.9em;
@@ -117,7 +118,7 @@
 
         input, select {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            border: 1px solid rgba(77, 159, 255, 0.3);
             border-radius: 8px;
             padding: 12px;
             color: #fff;
@@ -127,9 +128,9 @@
 
         input:focus, select:focus {
             outline: none;
-            border-color: #00ff88;
+            border-color: #4d9fff;
             background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 10px rgba(77, 159, 255, 0.3);
         }
 
         select option {
@@ -138,8 +139,8 @@
         }
 
         .save-btn {
-            background: linear-gradient(135deg, #00ff88, #00cc66);
-            color: #000;
+            background: linear-gradient(135deg, #4d9fff, #3d7fff);
+            color: #fff;
             border: none;
             padding: 15px 40px;
             border-radius: 25px;
@@ -148,19 +149,24 @@
             font-weight: bold;
             width: 100%;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 4px 15px rgba(77, 159, 255, 0.3);
         }
 
         .save-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 6px 20px rgba(77, 159, 255, 0.5);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .table-container {
             overflow-x: auto;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(77, 159, 255, 0.2);
             border-radius: 15px;
             padding: 20px;
         }
@@ -168,19 +174,19 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
+            min-width: 1600px;
         }
 
         thead {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 102, 0.2));
+            background: linear-gradient(135deg, rgba(77, 159, 255, 0.2), rgba(61, 127, 255, 0.2));
         }
 
         th {
             padding: 15px 10px;
             text-align: left;
-            color: #00ff88;
+            color: #4d9fff;
             font-weight: 600;
-            border-bottom: 2px solid #00ff88;
+            border-bottom: 2px solid #4d9fff;
             white-space: nowrap;
         }
 
@@ -191,7 +197,7 @@
         }
 
         tr:hover {
-            background: rgba(0, 255, 136, 0.05);
+            background: rgba(77, 159, 255, 0.05);
         }
 
         .no-data {
@@ -235,13 +241,30 @@
         }
 
         .long {
-            color: #00ff88;
+            color: #4d9fff;
             font-weight: bold;
         }
 
         .short {
             color: #ff4444;
             font-weight: bold;
+        }
+
+        .win {
+            color: #4d9fff;
+            font-weight: bold;
+        }
+
+        .loss {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            color: #4d9fff;
+            font-size: 1.2em;
+            padding: 20px;
         }
     </style>
 </head>
@@ -260,34 +283,30 @@
         <!-- Form Page -->
         <div id="formPage" class="page active">
             <div class="form-container">
-                <h2 style="margin-bottom: 25px; color: #00ff88;">Completează detaliile tranzacției</h2>
+                <h2 style="margin-bottom: 25px; color: #4d9fff;">Completează detaliile tranzacției</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="luna">Luna *</label>
-                        <input type="text" id="luna" placeholder="ex: Ianuarie">
+                        <label for="luna">Month *</label>
+                        <input type="text" id="luna" placeholder="ex: January">
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
+                        <label for="data">Date *</label>
                         <input type="date" id="data">
                     </div>
                     <div class="form-group">
-                        <label for="zi">Zi *</label>
-                        <input type="text" id="zi" placeholder="ex: Luni">
+                        <label for="zi">Day *</label>
+                        <input type="text" id="zi" placeholder="ex: Monday">
                     </div>
                     <div class="form-group">
-                        <label for="entryHour">Entry Hour *</label>
-                        <input type="time" id="entryHour">
-                    </div>
-                    <div class="form-group">
-                        <label for="pereche">Pereche de Tranzacționare *</label>
+                        <label for="pereche">Pair *</label>
                         <input type="text" id="pereche" placeholder="ex: EUR/USD">
                     </div>
                     <div class="form-group">
-                        <label for="sesiune">Sesiune *</label>
+                        <label for="sesiune">Session *</label>
                         <select id="sesiune">
                             <option value="">Selectează sesiunea</option>
                             <option value="Asia">Asia</option>
-                            <option value="Londra">Londra</option>
+                            <option value="London">London</option>
                             <option value="New York">New York</option>
                         </select>
                     </div>
@@ -297,6 +316,14 @@
                             <option value="">Selectează poziția</option>
                             <option value="Long">Long</option>
                             <option value="Short">Short</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wl">W/L</label>
+                        <select id="wl">
+                            <option value="">Selectează</option>
+                            <option value="Win">Win</option>
+                            <option value="Loss">Loss</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -320,6 +347,18 @@
                         <input type="number" step="0.00001" id="entry" placeholder="ex: 1.08500">
                     </div>
                     <div class="form-group">
+                        <label for="entryHour">Entry Hour</label>
+                        <input type="time" id="entryHour">
+                    </div>
+                    <div class="form-group">
+                        <label for="exitHour">Exit Hour</label>
+                        <input type="time" id="exitHour">
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration</label>
+                        <input type="text" id="duration" placeholder="ex: 2h 30m">
+                    </div>
+                    <div class="form-group">
                         <label for="sl">SL</label>
                         <input type="number" step="0.00001" id="sl" placeholder="ex: 1.08400">
                     </div>
@@ -328,12 +367,8 @@
                         <input type="number" step="0.00001" id="tp" placeholder="ex: 1.08700">
                     </div>
                     <div class="form-group">
-                        <label for="exitPrice">Exit Price</label>
-                        <input type="number" step="0.00001" id="exitPrice" placeholder="ex: 1.08650">
-                    </div>
-                    <div class="form-group">
-                        <label for="exitHour">Exit Hour</label>
-                        <input type="time" id="exitHour">
+                        <label for="pips">Pips</label>
+                        <input type="number" step="0.1" id="pips" placeholder="ex: 25.5">
                     </div>
                 </div>
                 <button class="save-btn" id="saveBtn">Salvează</button>
@@ -343,32 +378,34 @@
         <!-- Table Page -->
         <div id="tablePage" class="page">
             <div class="table-container">
-                <h2 style="margin-bottom: 20px; color: #00ff88;">Istoricul Tranzacțiilor</h2>
+                <h2 style="margin-bottom: 20px; color: #4d9fff;">Istoricul Tranzacțiilor</h2>
                 <table id="tradesTable">
                     <thead>
                         <tr>
-                            <th>Luna</th>
-                            <th>Data</th>
-                            <th>Zi</th>
-                            <th>Entry Hour</th>
-                            <th>Pereche</th>
-                            <th>Sesiune</th>
+                            <th>Month</th>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Pair</th>
+                            <th>Session</th>
                             <th>Long/Short</th>
+                            <th>W/L</th>
                             <th>R</th>
                             <th>Risk</th>
                             <th>Profit</th>
                             <th>TV</th>
                             <th>Entry</th>
+                            <th>Entry Hour</th>
+                            <th>Exit Hour</th>
+                            <th>Duration</th>
                             <th>SL</th>
                             <th>TP</th>
-                            <th>Exit Price</th>
-                            <th>Exit Hour</th>
+                            <th>Pips</th>
                             <th>Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody id="tradesBody">
                         <tr>
-                            <td colspan="17" class="no-data">Nu există tranzacții salvate</td>
+                            <td colspan="19" class="no-data">Se încarcă datele...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -377,8 +414,7 @@
     </div>
 
     <script>
-        // ÎNLOCUIEȘTE ACEST URL CU URL-UL TĂU DE LA APPS SCRIPT
-        const GOOGLE_SCRIPT_URL = 'PUNE_AICI_URL_UL_TAU_DE_LA_APPS_SCRIPT';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgfjNnriUwOF_A3HFkfSHhpuO1cwHqArZE1hQVj536GPKlfw1bQAUkm4l6YeAROfhoYQ/exec';
         
         let trades = [];
         let editingIndex = -1;
@@ -421,13 +457,12 @@
             const luna = document.getElementById('luna').value;
             const data = document.getElementById('data').value;
             const zi = document.getElementById('zi').value;
-            const entryHour = document.getElementById('entryHour').value;
             const pereche = document.getElementById('pereche').value;
             const sesiune = document.getElementById('sesiune').value;
             const position = document.getElementById('position').value;
             const risk = document.getElementById('risk').value;
 
-            if (!luna || !data || !zi || !entryHour || !pereche || !sesiune || !position || !risk) {
+            if (!luna || !data || !zi || !pereche || !sesiune || !position || !risk) {
                 alert('Te rog completează toate câmpurile obligatorii marcate cu *');
                 return;
             }
@@ -436,19 +471,21 @@
                 luna: luna,
                 data: data,
                 zi: zi,
-                entryHour: entryHour,
                 pereche: pereche,
                 sesiune: sesiune,
                 position: position,
+                wl: document.getElementById('wl').value,
                 r: document.getElementById('r').value,
                 risk: risk,
                 profit: document.getElementById('profit').value,
                 tv: document.getElementById('tv').value,
                 entry: document.getElementById('entry').value,
+                entryHour: document.getElementById('entryHour').value,
+                exitHour: document.getElementById('exitHour').value,
+                duration: document.getElementById('duration').value,
                 sl: document.getElementById('sl').value,
                 tp: document.getElementById('tp').value,
-                exitPrice: document.getElementById('exitPrice').value,
-                exitHour: document.getElementById('exitHour').value
+                pips: document.getElementById('pips').value
             };
 
             if (editingIndex >= 0) {
@@ -463,24 +500,26 @@
             document.getElementById('luna').value = '';
             document.getElementById('data').value = '';
             document.getElementById('zi').value = '';
-            document.getElementById('entryHour').value = '';
             document.getElementById('pereche').value = '';
             document.getElementById('sesiune').value = '';
             document.getElementById('position').value = '';
+            document.getElementById('wl').value = '';
             document.getElementById('r').value = '';
             document.getElementById('risk').value = '';
             document.getElementById('profit').value = '';
             document.getElementById('tv').value = '';
             document.getElementById('entry').value = '';
+            document.getElementById('entryHour').value = '';
+            document.getElementById('exitHour').value = '';
+            document.getElementById('duration').value = '';
             document.getElementById('sl').value = '';
             document.getElementById('tp').value = '';
-            document.getElementById('exitPrice').value = '';
-            document.getElementById('exitHour').value = '';
+            document.getElementById('pips').value = '';
         }
 
         function updateTable() {
             if (trades.length === 0) {
-                tradesBody.innerHTML = '<tr><td colspan="17" class="no-data">Nu există tranzacții salvate</td></tr>';
+                tradesBody.innerHTML = '<tr><td colspan="19" class="no-data">Nu există tranzacții salvate</td></tr>';
                 return;
             }
 
@@ -489,74 +528,43 @@
             for (let i = 0; i < trades.length; i++) {
                 const trade = trades[i];
                 const row = document.createElement('tr');
+                
                 const positionClass = trade.position === 'Long' ? 'long' : 'short';
+                const wlClass = trade.wl === 'Win' ? 'win' : trade.wl === 'Loss' ? 'loss' : '';
                 
-                const td1 = document.createElement('td');
-                td1.textContent = trade.luna;
-                row.appendChild(td1);
+                const cells = [
+                    trade.luna,
+                    trade.data,
+                    trade.zi,
+                    trade.pereche,
+                    trade.sesiune,
+                    { text: trade.position, class: positionClass },
+                    { text: trade.wl || '-', class: wlClass },
+                    trade.r || '-',
+                    trade.risk,
+                    trade.profit || '-',
+                    trade.tv || '-',
+                    trade.entry || '-',
+                    trade.entryHour || '-',
+                    trade.exitHour || '-',
+                    trade.duration || '-',
+                    trade.sl || '-',
+                    trade.tp || '-',
+                    trade.pips || '-'
+                ];
                 
-                const td2 = document.createElement('td');
-                td2.textContent = trade.data;
-                row.appendChild(td2);
+                cells.forEach(function(cell) {
+                    const td = document.createElement('td');
+                    if (typeof cell === 'object') {
+                        td.textContent = cell.text;
+                        if (cell.class) td.className = cell.class;
+                    } else {
+                        td.textContent = cell;
+                    }
+                    row.appendChild(td);
+                });
                 
-                const td3 = document.createElement('td');
-                td3.textContent = trade.zi;
-                row.appendChild(td3);
-                
-                const td4 = document.createElement('td');
-                td4.textContent = trade.entryHour;
-                row.appendChild(td4);
-                
-                const td5 = document.createElement('td');
-                td5.textContent = trade.pereche;
-                row.appendChild(td5);
-                
-                const td6 = document.createElement('td');
-                td6.textContent = trade.sesiune;
-                row.appendChild(td6);
-                
-                const td7 = document.createElement('td');
-                td7.textContent = trade.position;
-                td7.className = positionClass;
-                row.appendChild(td7);
-                
-                const td8 = document.createElement('td');
-                td8.textContent = trade.r || '-';
-                row.appendChild(td8);
-                
-                const td9 = document.createElement('td');
-                td9.textContent = trade.risk;
-                row.appendChild(td9);
-                
-                const td10 = document.createElement('td');
-                td10.textContent = trade.profit || '-';
-                row.appendChild(td10);
-                
-                const td11 = document.createElement('td');
-                td11.textContent = trade.tv || '-';
-                row.appendChild(td11);
-                
-                const td12 = document.createElement('td');
-                td12.textContent = trade.entry || '-';
-                row.appendChild(td12);
-                
-                const td13 = document.createElement('td');
-                td13.textContent = trade.sl || '-';
-                row.appendChild(td13);
-                
-                const td14 = document.createElement('td');
-                td14.textContent = trade.tp || '-';
-                row.appendChild(td14);
-                
-                const td15 = document.createElement('td');
-                td15.textContent = trade.exitPrice || '-';
-                row.appendChild(td15);
-                
-                const td16 = document.createElement('td');
-                td16.textContent = trade.exitHour || '-';
-                row.appendChild(td16);
-                
-                const td17 = document.createElement('td');
+                const tdActions = document.createElement('td');
                 
                 const editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn';
@@ -576,9 +584,9 @@
                     };
                 })(i);
                 
-                td17.appendChild(editBtn);
-                td17.appendChild(deleteBtn);
-                row.appendChild(td17);
+                tdActions.appendChild(editBtn);
+                tdActions.appendChild(deleteBtn);
+                row.appendChild(tdActions);
                 
                 tradesBody.appendChild(row);
             }
@@ -591,19 +599,21 @@
             document.getElementById('luna').value = trade.luna || '';
             document.getElementById('data').value = trade.data || '';
             document.getElementById('zi').value = trade.zi || '';
-            document.getElementById('entryHour').value = trade.entryHour || '';
             document.getElementById('pereche').value = trade.pereche || '';
             document.getElementById('sesiune').value = trade.sesiune || '';
             document.getElementById('position').value = trade.position || '';
+            document.getElementById('wl').value = trade.wl || '';
             document.getElementById('r').value = trade.r || '';
             document.getElementById('risk').value = trade.risk || '';
             document.getElementById('profit').value = trade.profit || '';
             document.getElementById('tv').value = trade.tv || '';
             document.getElementById('entry').value = trade.entry || '';
+            document.getElementById('entryHour').value = trade.entryHour || '';
+            document.getElementById('exitHour').value = trade.exitHour || '';
+            document.getElementById('duration').value = trade.duration || '';
             document.getElementById('sl').value = trade.sl || '';
             document.getElementById('tp').value = trade.tp || '';
-            document.getElementById('exitPrice').value = trade.exitPrice || '';
-            document.getElementById('exitHour').value = trade.exitHour || '';
+            document.getElementById('pips').value = trade.pips || '';
             
             showPage('form');
         }
@@ -614,12 +624,12 @@
             }
         }
 
-        // Google Sheets API Functions
         function loadTradesFromSheet() {
             if (isLoading) return;
             isLoading = true;
+            saveBtn.disabled = true;
             
-            tradesBody.innerHTML = '<tr><td colspan="17" class="no-data">Se încarcă datele...</td></tr>';
+            tradesBody.innerHTML = '<tr><td colspan="19" class="loading">Se încarcă datele din Google Sheets...</td></tr>';
             
             fetch(GOOGLE_SCRIPT_URL + '?action=get')
                 .then(function(response) {
@@ -627,25 +637,29 @@
                 })
                 .then(function(data) {
                     isLoading = false;
+                    saveBtn.disabled = false;
                     if (data.result === 'success') {
                         trades = data.data;
                         updateTable();
                     } else {
                         alert('Eroare la încărcarea datelor: ' + data.message);
-                        tradesBody.innerHTML = '<tr><td colspan="17" class="no-data">Eroare la încărcarea datelor</td></tr>';
+                        tradesBody.innerHTML = '<tr><td colspan="19" class="no-data">Eroare la încărcarea datelor</td></tr>';
                     }
                 })
                 .catch(function(error) {
                     isLoading = false;
+                    saveBtn.disabled = false;
                     console.error('Error:', error);
-                    alert('Eroare la conexiunea cu Google Sheets. Verifică URL-ul Apps Script.');
-                    tradesBody.innerHTML = '<tr><td colspan="17" class="no-data">Eroare la conexiune</td></tr>';
+                    alert('Eroare la conexiunea cu Google Sheets. Verifică conexiunea la internet.');
+                    tradesBody.innerHTML = '<tr><td colspan="19" class="no-data">Eroare la conexiune</td></tr>';
                 });
         }
 
         function addTradeToSheet(trade) {
             if (isLoading) return;
             isLoading = true;
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Se salvează...';
             
             const params = new URLSearchParams();
             params.append('action', 'add');
@@ -659,8 +673,10 @@
                 })
                 .then(function(data) {
                     isLoading = false;
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Salvează';
                     if (data.result === 'success') {
-                        alert('Tranzacția a fost salvată cu succes!');
+                        alert('Tranzacția a fost salvată cu succes în Google Sheets!');
                         clearForm();
                         editingIndex = -1;
                         showPage('table');
@@ -671,6 +687,8 @@
                 })
                 .catch(function(error) {
                     isLoading = false;
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Salvează';
                     console.error('Error:', error);
                     alert('Eroare la salvarea datelor în Google Sheets.');
                 });
@@ -679,6 +697,8 @@
         function updateTradeInSheet(trade) {
             if (isLoading) return;
             isLoading = true;
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Se actualizează...';
             
             const params = new URLSearchParams();
             params.append('action', 'update');
@@ -692,6 +712,8 @@
                 })
                 .then(function(data) {
                     isLoading = false;
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Salvează';
                     if (data.result === 'success') {
                         alert('Tranzacția a fost actualizată cu succes!');
                         clearForm();
@@ -704,6 +726,8 @@
                 })
                 .catch(function(error) {
                     isLoading = false;
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Salvează';
                     console.error('Error:', error);
                     alert('Eroare la actualizarea datelor în Google Sheets.');
                 });
@@ -724,7 +748,7 @@
                 .then(function(data) {
                     isLoading = false;
                     if (data.result === 'success') {
-                        alert('Tranzacția a fost ștearsă cu succes!');
+                        alert('Tranzacția a fost ștearsă cu succes din Google Sheets!');
                         loadTradesFromSheet();
                     } else {
                         alert('Eroare la ștergere: ' + data.message);
@@ -737,11 +761,8 @@
                 });
         }
 
-        // Încarcă datele când pagina se deschide
         window.addEventListener('load', function() {
-            if (GOOGLE_SCRIPT_URL !== 'PUNE_AICI_URL_UL_TAU_DE_LA_APPS_SCRIPT') {
-                loadTradesFromSheet();
-            }
+            loadTradesFromSheet();
         });
     </script>
 </body>
