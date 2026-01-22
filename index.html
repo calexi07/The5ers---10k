@@ -49,6 +49,11 @@
         .nav-buttons {
             text-align: center;
             margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .nav-btn {
@@ -56,7 +61,7 @@
             color: #fff;
             border: none;
             padding: 12px 30px;
-            margin: 0 10px;
+            margin: 0;
             border-radius: 25px;
             cursor: pointer;
             font-size: 1em;
@@ -73,6 +78,56 @@
         .nav-btn.active {
             background: linear-gradient(135deg, #fff, #e0e0e0);
             color: #000;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #00cc88, #00aa66);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            margin: 0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 204, 136, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 204, 136, 0.5);
+        }
+
+        .upload-btn input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .download-template-btn {
+            background: linear-gradient(135deg, #ff9500, #ff7700);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            margin: 0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+        }
+
+        .download-template-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.5);
         }
 
         .page {
@@ -309,6 +364,11 @@
         <div class="nav-buttons">
             <button class="nav-btn active" id="btnForm">Adaugă Tranzacție</button>
             <button class="nav-btn" id="btnTable">Jurnal de Tranzacționare</button>
+            <button class="download-template-btn" id="btnDownloadTemplate">📥 Descarcă Template</button>
+            <label class="upload-btn">
+                📁 Încarcă CSV/Excel
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+            </label>
         </div>
 
         <!-- Form Page -->
@@ -444,6 +504,8 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgfjNnriUwOF_A3HFkfSHhpuO1cwHqArZE1hQVj536GPKlfw1bQAUkm4l6YeAROfhoYQ/exec';
         
@@ -876,6 +938,211 @@
         window.addEventListener('load', function() {
             loadTradesFromSheet();
         });
+
+        // Download Template Button
+        document.getElementById('btnDownloadTemplate').addEventListener('click', function() {
+            downloadTemplate();
+        });
+
+        function downloadTemplate() {
+            // Creează un template Excel cu headere și exemple
+            const templateData = [
+                // Headere
+                ['Month', 'Date', 'Day', 'Pair', 'Session', 'Long/Short', 'W/L', 'R', 'Risk', 'Profit', 'TV', 'Entry', 'Entry Hour', 'Exit Hour', 'Duration', 'SL', 'TP', 'Pips'],
+                // Exemple
+                ['January', '2026-01-15', 'Monday', 'EUR/USD', 'London', 'Long', 'Win', '2.5', '100', '250', '1000', '1.08500', '09:30', '11:45', '2h 15m', '1.08400', '1.08700', '25.5'],
+                ['January', '2026-01-16', 'Tuesday', 'GBP/USD', 'New York', 'Short', 'Loss', '1', '100', '-100', '900', '1.27300', '14:20', '15:30', '1h 10m', '1.27400', '1.27200', '-10'],
+                ['January', '2026-01-17', 'Wednesday', 'USD/JPY', 'Asia', 'Long', 'Win', '3', '100', '300', '1200', '149.500', '02:15', '05:30', '3h 15m', '149.200', '149.800', '30']
+            ];
+
+            // Creează workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(templateData);
+
+            // Setează lățimea coloanelor
+            ws['!cols'] = [
+                { wch: 10 },  // Month
+                { wch: 12 },  // Date
+                { wch: 12 },  // Day
+                { wch: 10 },  // Pair
+                { wch: 12 },  // Session
+                { wch: 12 },  // Long/Short
+                { wch: 8 },   // W/L
+                { wch: 8 },   // R
+                { wch: 10 },  // Risk
+                { wch: 10 },  // Profit
+                { wch: 10 },  // TV
+                { wch: 12 },  // Entry
+                { wch: 12 },  // Entry Hour
+                { wch: 12 },  // Exit Hour
+                { wch: 12 },  // Duration
+                { wch: 12 },  // SL
+                { wch: 12 },  // TP
+                { wch: 10 }   // Pips
+            ];
+
+            // Adaugă worksheet la workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Trading Journal Template');
+
+            // Descarcă fișierul
+            XLSX.writeFile(wb, 'Trading_Journal_Template.xlsx');
+
+            alert('Template-ul a fost descărcat cu succes!\n\nFișierul conține:\n- Headere corecte\n- 3 exemple de tranzacții\n\nPoți șterge exemplele și adăuga datele tale.');
+        }
+
+        // File Upload Handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+            
+            if (fileName.endsWith('.csv')) {
+                handleCSV(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                handleExcel(file);
+            } else {
+                alert('Te rog încarcă un fișier CSV sau Excel (.xlsx, .xls)');
+            }
+            
+            // Reset input
+            e.target.value = '';
+        });
+
+        function handleCSV(file) {
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processParsedData(results.data);
+                },
+                error: function(error) {
+                    alert('Eroare la citirea fișierului CSV: ' + error.message);
+                }
+            });
+        }
+
+        function handleExcel(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    processParsedData(jsonData);
+                } catch (error) {
+                    alert('Eroare la citirea fișierului Excel: ' + error.message);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processParsedData(data) {
+            if (!data || data.length === 0) {
+                alert('Fișierul este gol sau nu conține date valide.');
+                return;
+            }
+
+            console.log('Parsed data:', data);
+            
+            // Mapează coloanele din fișier la câmpurile noastre
+            const mappedTrades = data.map(function(row) {
+                return {
+                    luna: row.Month || row.Luna || row.month || '',
+                    data: row.Date || row.Data || row.date || '',
+                    zi: row.Day || row.Zi || row.day || '',
+                    pereche: row.Pair || row.Pereche || row.pair || '',
+                    sesiune: row.Session || row.Sesiune || row.session || '',
+                    position: row['Long/Short'] || row.Position || row.position || '',
+                    wl: row['W/L'] || row.WL || row.wl || '',
+                    r: row.R || row.r || '',
+                    risk: row.Risk || row.risk || '',
+                    profit: row.Profit || row.profit || '',
+                    tv: row.TV || row.tv || '',
+                    entry: row.Entry || row.entry || '',
+                    entryHour: row['Entry Hour'] || row.HourEntry || row.entryHour || '',
+                    exitHour: row['Exit Hour'] || row.HourExit || row.exitHour || '',
+                    duration: row.Duration || row.duration || '',
+                    sl: row.SL || row.sl || '',
+                    tp: row.TP || row.tp || '',
+                    pips: row.Pips || row.pips || ''
+                };
+            });
+
+            // Filtrează rândurile goale sau invalide
+            const validTrades = mappedTrades.filter(function(trade) {
+                return trade.luna && trade.data && trade.pereche;
+            });
+
+            if (validTrades.length === 0) {
+                alert('Nu s-au găsit tranzacții valide în fișier. Verifică că headerele sunt corecte.');
+                return;
+            }
+
+            // Confirmă înainte de încărcare
+            const confirmed = confirm(
+                'Ai găsit ' + validTrades.length + ' tranzacții în fișier.\n\n' +
+                'Sigur vrei să le adaugi în Google Sheets?'
+            );
+
+            if (confirmed) {
+                uploadMultipleTrades(validTrades);
+            }
+        }
+
+        function uploadMultipleTrades(trades) {
+            let successCount = 0;
+            let errorCount = 0;
+            const total = trades.length;
+
+            alert('Se încarcă ' + total + ' tranzacții...\nAceasta poate dura câteva secunde.');
+
+            function uploadNext(index) {
+                if (index >= total) {
+                    alert(
+                        'Încărcare completă!\n\n' +
+                        'Succes: ' + successCount + '\n' +
+                        'Erori: ' + errorCount
+                    );
+                    loadTradesFromSheet();
+                    return;
+                }
+
+                const trade = trades[index];
+                
+                const params = new URLSearchParams();
+                params.append('action', 'add');
+                Object.keys(trade).forEach(function(key) {
+                    params.append(key, trade[key] || '');
+                });
+
+                fetch(GOOGLE_SCRIPT_URL + '?' + params.toString())
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.result === 'success') {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                        }
+                        // Continuă cu următoarea tranzacție
+                        uploadNext(index + 1);
+                    })
+                    .catch(function(error) {
+                        errorCount++;
+                        console.error('Error uploading trade:', error);
+                        // Continuă cu următoarea tranzacție
+                        uploadNext(index + 1);
+                    });
+            }
+
+            uploadNext(0);
+        }
     </script>
 </body>
 </html>
