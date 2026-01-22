@@ -432,7 +432,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Jurnal </h1>
+            <h1>Jurnaleee </h1>
             <p>Scoala de Tranzactionare</p>
         </div>
 
@@ -880,26 +880,26 @@
                 });
         }
 
-        function updateDashboard(profit, winrate) {
-            const profitCard = document.getElementById('statProfit');
-            const profitValue = profitCard.querySelector('.stat-value');
-            const profitNum = parseFloat(profit) || 0;
-            
-            profitValue.textContent = '
-             + profitNum.toFixed(2);
-            
-            if (profitNum > 0) {
-                profitCard.className = 'stat-card positive';
-            } else if (profitNum < 0) {
-                profitCard.className = 'stat-card negative';
-            } else {
-                profitCard.className = 'stat-card';
-            }
-            
-            const winrateValue = document.getElementById('statWinRate');
-            const winrateNum = parseFloat(winrate) || 0;
-            winrateValue.textContent = winrateNum.toFixed(2) + '%';
-        }
+    function updateDashboard(profit, winrate) {
+    const profitCard = document.getElementById('statProfit');
+    const profitValue = profitCard.querySelector('.stat-value');
+    const profitNum = parseFloat(profit) || 0;
+
+    profitValue.textContent = '$' + profitNum.toFixed(2);
+
+    if (profitNum > 0) {
+        profitCard.className = 'stat-card positive';
+    } else if (profitNum < 0) {
+        profitCard.className = 'stat-card negative';
+    } else {
+        profitCard.className = 'stat-card';
+    }
+
+    const winrateValue = document.getElementById('statWinRate');
+    const winrateNum = parseFloat(winrate) || 0;
+    winrateValue.textContent = winrateNum.toFixed(2) + '%';
+}
+
 
         function addTradeToSheet(trade) {
             if (isLoading) return;
@@ -1119,10 +1119,15 @@
         }
 
         function processParsedData(data) {
-            if (!data || data.length === 0) {
-                alert('Fișierul este gol sau nu conține date valide.');
-                return;
-            }
+    if (!data || data.length === 0) {
+        alert('Fișierul este gol sau nu conține date valide.');
+        return;
+    }
+
+    // TODO: mapare coloane + upload către Sheets
+    console.log('Date parsate:', data);
+}
+
 
             console.log('Parsed data:', data);
             
