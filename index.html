@@ -723,6 +723,21 @@
                         <div class="stat-value" id="statWinRate">0%</div>
                         <div class="stat-subtext">Rata de succes</div>
                     </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 160, 0, 0.05)); border-color: rgba(255, 193, 7, 0.3);">
+                        <div class="stat-label">R Mediu</div>
+                        <div class="stat-value" style="color: #ffc107;" id="statAvgR">0.00</div>
+                        <div class="stat-subtext">Average R per trade</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(123, 31, 162, 0.05)); border-color: rgba(156, 39, 176, 0.3);">
+                        <div class="stat-label">Expectancy</div>
+                        <div class="stat-value" style="color: #ab47bc;" id="statExpectancy">$0.00</div>
+                        <div class="stat-subtext">Average profit per trade</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 172, 193, 0.05)); border-color: rgba(0, 188, 212, 0.3);">
+                        <div class="stat-label">Frequency</div>
+                        <div class="stat-value" style="color: #00bcd4;" id="statFrequency">0</div>
+                        <div class="stat-subtext">Trades per week</div>
+                    </div>
                     <div class="stat-card positive">
                         <div class="stat-label">Wins</div>
                         <div class="stat-value" id="statWins">0</div>
@@ -1256,6 +1271,36 @@ function updateDashboard() {
         ? (((currentBalance - initialBalance) / initialBalance) * 100).toFixed(2)
         : 0;
     
+    // Calculate Average R
+    const totalR = closedTrades.reduce((sum, t) => {
+        const r = parseFloat(t.r) || 0;
+        const wl = t.wl;
+        // For losses, R should be negative
+        return sum + (wl === 'Loss' ? -Math.abs(r) : r);
+    }, 0);
+    const avgR = closedTrades.length > 0 ? (totalR / closedTrades.length).toFixed(2) : 0;
+    
+    // Calculate Expectancy (average profit per trade)
+    const expectancy = closedTrades.length > 0 
+        ? (totalProfit / closedTrades.length).toFixed(2)
+        : 0;
+    
+    // Calculate Frequency (trades per week)
+    let frequency = 0;
+    if (closedTrades.length > 0) {
+        // Get date range
+        const dates = closedTrades.map(t => new Date(t.data)).filter(d => !isNaN(d));
+        if (dates.length > 0) {
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            const daysDiff = (maxDate - minDate) / (1000 * 60 * 60 * 24);
+            const weeks = daysDiff / 7;
+            frequency = weeks > 0 ? (closedTrades.length / weeks).toFixed(1) : closedTrades.length;
+        } else {
+            frequency = 0;
+        }
+    }
+    
     // Update dashboard
     document.getElementById('statProfitValue').textContent = `$${totalProfit.toFixed(2)}`;
     document.getElementById('statCurrentBalance').textContent = `$${currentBalance.toFixed(2)}`;
@@ -1264,6 +1309,11 @@ function updateDashboard() {
     document.getElementById('statWins').textContent = wins.length;
     document.getElementById('statLosses').textContent = losses.length;
     document.getElementById('statOpen').textContent = openTrades.length;
+    
+    // Update new metrics
+    document.getElementById('statAvgR').textContent = avgR;
+    document.getElementById('statExpectancy').textContent = `$${expectancy}`;
+    document.getElementById('statFrequency').textContent = frequency;
     
     // Update profit card color based on positive/negative
     const profitCard = document.getElementById('statProfit');
