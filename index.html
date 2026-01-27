@@ -668,18 +668,44 @@ function calculateDuration() {
     return '';
 }
 
+// Determine pip value based on pair/instrument
+function getPipValue(pair) {
+    const pairUpper = pair.toUpperCase();
+    
+    // Gold (XAUUSD) - 1 pip = 0.10
+    if (pairUpper.includes('XAU') || pairUpper.includes('GOLD')) {
+        return 0.10;
+    }
+    // Silver (XAGUSD) - 1 pip = 0.01
+    if (pairUpper.includes('XAG') || pairUpper.includes('SILVER')) {
+        return 0.01;
+    }
+    // Oil pairs - 1 pip = 0.01
+    if (pairUpper.includes('OIL') || pairUpper.includes('WTI') || pairUpper.includes('BRENT')) {
+        return 0.01;
+    }
+    // JPY pairs - 1 pip = 0.01
+    if (pairUpper.includes('JPY')) {
+        return 0.01;
+    }
+    // Indices - 1 pip = 1.0
+    if (pairUpper.includes('US30') || pairUpper.includes('NAS100') || pairUpper.includes('SPX500') || 
+        pairUpper.includes('GER40') || pairUpper.includes('UK100')) {
+        return 1.0;
+    }
+    // Standard forex pairs - 1 pip = 0.0001
+    return 0.0001;
+}
+
 // Calculate Pips based on Entry, Exit/SL, and Position
-function calculatePips(entry, exit, position) {
+function calculatePips(entry, exit, position, pair) {
     if (!entry || !exit) return 0;
     
     const entryPrice = parseFloat(entry);
     const exitPrice = parseFloat(exit);
+    const pipValue = getPipValue(pair || '');
     
     let pips = 0;
-    
-    // For most pairs (4 decimal places), 1 pip = 0.0001
-    // For JPY pairs (2 decimal places), 1 pip = 0.01
-    const pipValue = entryPrice > 100 ? 0.01 : 0.0001;
     
     if (position === 'Long') {
         pips = (exitPrice - entryPrice) / pipValue;
@@ -702,16 +728,17 @@ function calculateR(entry, sl, tp, position) {
     let reward = 0;
     
     if (position === 'Long') {
-        risk = entryPrice - slPrice;
+        risk = Math.abs(entryPrice - slPrice);
         reward = tpPrice - entryPrice;
     } else if (position === 'Short') {
-        risk = slPrice - entryPrice;
+        risk = Math.abs(slPrice - entryPrice);
         reward = entryPrice - tpPrice;
     }
     
     if (risk === 0) return 0;
     
-    return Math.round((reward / risk) * 100) / 100; // Round to 2 decimals
+    const rValue = reward / risk;
+    return Math.round(rValue * 100) / 100; // Round to 2 decimals
 }
 
 // Calculate Profit based on R and Risk
@@ -761,6 +788,7 @@ function getFormData() {
     const position = document.getElementById('position').value;
     const wl = document.getElementById('wl').value;
     const risk = document.getElementById('risk').value;
+    const pereche = document.getElementById('pereche').value;
     const entryHour = document.getElementById('entryHour').value;
     const exitHour = document.getElementById('exitHour').value;
     
@@ -769,7 +797,7 @@ function getFormData() {
     
     // Calculate pips (use EXIT if available, otherwise use SL)
     const exitPrice = tp || sl;
-    const pips = calculatePips(entry, exitPrice, position);
+    const pips = calculatePips(entry, exitPrice, position, pereche);
     
     // Calculate R if TP is provided
     const r = tp ? calculateR(entry, sl, tp, position) : 0;
@@ -781,7 +809,7 @@ function getFormData() {
         luna: document.getElementById('luna').value,
         data: document.getElementById('data').value,
         zi: document.getElementById('zi').value,
-        pereche: document.getElementById('pereche').value,
+        pereche: pereche,
         sesiune: document.getElementById('sesiune').value,
         position: position,
         wl: wl,
