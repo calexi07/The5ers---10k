@@ -887,15 +887,19 @@ function calculatePartialProfit(entry, exitPrice, lot, position, pair) {
     
     if (pairUpper.includes('XAU') || pairUpper.includes('GOLD')) {
         // Gold: $1 per 0.01 lot per $1 move
+        // For 0.01 lot, 1 pip ($0.10 move) = $1 profit
         profitPerLot = pips * 0.10 * (lotAmount / 0.01);
     } else if (pairUpper.includes('XAG') || pairUpper.includes('SILVER')) {
-        // Silver: Similar to gold
+        // Silver: Similar calculation
         profitPerLot = pips * 0.01 * (lotAmount / 0.01);
-    } else if (pairUpper.includes('US30') || pairUpper.includes('NAS100') || pairUpper.includes('SPX500')) {
-        // Indices: $1 per point per lot
+    } else if (pairUpper.includes('US30') || pairUpper.includes('US100') || pairUpper.includes('NAS100') || 
+               pairUpper.includes('SPX500') || pairUpper.includes('GER40') || pairUpper.includes('UK100')) {
+        // Indices: For indices, 1 lot = $1 per point
+        // US100: 1 point move with 1 lot = $1
         profitPerLot = pips * lotAmount;
     } else {
         // Forex: Standard calculation - $10 per pip per standard lot (1.0)
+        // For 0.01 lot (micro lot): $10 * 0.01 = $0.10 per pip
         profitPerLot = pips * 10 * lotAmount;
     }
     
@@ -1113,6 +1117,13 @@ function getFormData() {
             return null;
         }
     }
+    
+    // Validate lot size is positive
+    const lotSizeValue = parseFloat(document.getElementById('lotSize').value);
+    if (lotSizeValue <= 0) {
+        alert('Lot Size trebuie să fie un număr pozitiv (ex: 0.01, 0.1, 1.0)');
+        return null;
+    }
 
     const entry = document.getElementById('entry').value;
     const sl = document.getElementById('sl').value;
@@ -1161,15 +1172,23 @@ function getFormData() {
         // Calculate profit from remaining position
         const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
         
-        if (tp && lotRemaining > 0) {
-            // Calculate profit for remaining lots at final exit
-            const remainingProfit = calculatePartialProfit(entry, tp, lotRemaining, position, pereche);
-            finalProfit = totalPartialProfit + remainingProfit;
-        } else if (wl === 'Loss') {
-            // If loss, calculate based on risk and remaining lots
-            const lotRatio = lotRemaining / parseFloat(lotSize);
-            finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
+        if (lotRemaining > 0) {
+            // Determine exit price: use TP/EXIT if available, otherwise use SL
+            const exitPrice = tp || sl;
+            
+            if (exitPrice) {
+                // Calculate profit for remaining lots at exit price
+                const remainingProfit = calculatePartialProfit(entry, exitPrice, lotRemaining, position, pereche);
+                finalProfit = totalPartialProfit + remainingProfit;
+            } else if (wl === 'Loss') {
+                // If no exit price, use risk amount (negative)
+                const lotRatio = lotRemaining / parseFloat(lotSize);
+                finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
+            } else {
+                finalProfit = totalPartialProfit;
+            }
         } else {
+            // All lots closed via partial closes
             finalProfit = totalPartialProfit;
         }
     } else if (wl === 'Open') {
