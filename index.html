@@ -393,9 +393,19 @@
             color: #ff4444;
             font-weight: bold;
         }
+        
+        .break-even {
+            color: #ffc107;
+            font-weight: bold;
+        }
 
         .open {
             color: #ff9500;
+            font-weight: bold;
+        }
+        
+        .break-even {
+            color: #ffc107;
             font-weight: bold;
         }
 
@@ -514,6 +524,7 @@
                             <option value="">Selectează</option>
                             <option value="Win">Win</option>
                             <option value="Loss">Loss</option>
+                            <option value="Break Even">Break Even</option>
                             <option value="Open">Open</option>
                         </select>
                     </div>
@@ -540,6 +551,10 @@
                     <div class="form-group">
                         <label for="risk">Risk *</label>
                         <input type="number" step="0.01" id="risk" placeholder="ex: 100">
+                    </div>
+                    <div class="form-group">
+                        <label for="profitOverride">Profit ($ - Optional Override)</label>
+                        <input type="number" step="0.01" id="profitOverride" placeholder="Lasă gol pentru calcul automat">
                     </div>
                     <div class="form-group">
                         <label for="lotSize">Lot Size *</label>
@@ -705,6 +720,7 @@
                             <option value="">Toate statusurile</option>
                             <option value="Win">Win</option>
                             <option value="Loss">Loss</option>
+                            <option value="Break Even">Break Even</option>
                             <option value="Open">Open</option>
                         </select>
                     </div>
@@ -760,10 +776,10 @@
                         <div class="stat-value" id="statWins">0</div>
                         <div class="stat-subtext">Tranzacții câștigătoare</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Open Trades</div>
-                        <div class="stat-value" id="statOpen">0</div>
-                        <div class="stat-subtext">Tranzacții deschise</div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 160, 0, 0.05)); border-color: rgba(255, 193, 7, 0.3);">
+                        <div class="stat-label">Break Even</div>
+                        <div class="stat-value" style="color: #ffc107;" id="statBreakEven">0</div>
+                        <div class="stat-subtext">Tranzacții la egal</div>
                     </div>
                     <div class="stat-card negative">
                         <div class="stat-label">Losses</div>
@@ -845,10 +861,10 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-overlay active" id="loadingOverlay">
         <div class="loading-spinner">
             <div class="spinner"></div>
-            <div class="loading-text">Se procesează...</div>
+            <div class="loading-text">Se încarcă datele...</div>
         </div>
     </div>
 
@@ -1283,23 +1299,29 @@ function getFormData() {
     // Calculate R if TP is provided
     const r = tp ? calculateR(entry, sl, tp, position) : 0;
     
-    // Calculate final profit based on R
+    // Check for manual profit override
+    const manualProfit = document.getElementById('profitOverride').value;
     let finalProfit = 0;
     
-    if (wl === 'Win') {
-        // Win: Profit = Partial Closes + (Risk × R for remaining position)
-        const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
-        const lotRatio = lotRemaining / parseFloat(lotSize);
-        const remainingProfit = parseFloat(risk) * r * lotRatio;
-        finalProfit = totalPartialProfit + remainingProfit;
-    } else if (wl === 'Loss') {
-        // Loss: Profit = Partial Closes - Risk (for remaining position)
-        const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
-        const lotRatio = lotRemaining / parseFloat(lotSize);
-        finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
-    } else if (wl === 'Open') {
-        // Open: Only count partial closes
-        finalProfit = totalPartialProfit;
+    if (manualProfit && manualProfit !== '') {
+        // Use manual profit override
+        finalProfit = parseFloat(manualProfit);
+    } else {
+        // Auto-calculate profit based on R
+        if (wl === 'Win') {
+            const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
+            const lotRatio = lotRemaining / parseFloat(lotSize);
+            const remainingProfit = parseFloat(risk) * r * lotRatio;
+            finalProfit = totalPartialProfit + remainingProfit;
+        } else if (wl === 'Loss') {
+            const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
+            const lotRatio = lotRemaining / parseFloat(lotSize);
+            finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
+        } else if (wl === 'Break Even') {
+            finalProfit = totalPartialProfit;
+        } else if (wl === 'Open') {
+            finalProfit = totalPartialProfit;
+        }
     }
 
     return {
@@ -1330,13 +1352,14 @@ function loadTradesFromSheet() {
     if (isLoading) return;
     isLoading = true;
 
-    tradesBody.innerHTML =
-        '<tr><td colspan="20" class="loading">Se încarcă datele...</td></tr>';
+    // Show loading overlay
+    showLoading();
 
     fetch(GOOGLE_SCRIPT_URL + '?action=get')
         .then(r => r.json())
         .then(res => {
             isLoading = false;
+            hideLoading();
             if (res.result === 'success') {
                 trades = res.data || [];
                 filteredTrades = [...trades];
@@ -1352,6 +1375,7 @@ function loadTradesFromSheet() {
         .catch(err => {
             console.error(err);
             isLoading = false;
+            hideLoading();
             tradesBody.innerHTML =
                 '<tr><td colspan="20" class="no-data">Eroare la încărcare</td></tr>';
         });
@@ -1360,9 +1384,10 @@ function loadTradesFromSheet() {
 // DASHBOARD
 function updateDashboard() {
     // Use filtered trades for statistics
-    const closedTrades = filteredTrades.filter(t => t.wl === 'Win' || t.wl === 'Loss');
+    const closedTrades = filteredTrades.filter(t => t.wl === 'Win' || t.wl === 'Loss' || t.wl === 'Break Even');
     const wins = filteredTrades.filter(t => t.wl === 'Win');
     const losses = filteredTrades.filter(t => t.wl === 'Loss');
+    const breakEven = filteredTrades.filter(t => t.wl === 'Break Even');
     const openTrades = filteredTrades.filter(t => t.wl === 'Open');
     
     // Calculate total profit (sum of all profit values)
@@ -1424,7 +1449,7 @@ function updateDashboard() {
     document.getElementById('statWinRate').textContent = `${winRate}%`;
     document.getElementById('statWins').textContent = wins.length;
     document.getElementById('statLosses').textContent = losses.length;
-    document.getElementById('statOpen').textContent = openTrades.length;
+    document.getElementById('statBreakEven').textContent = breakEven.length;
     
     // Update new metrics
     document.getElementById('statAvgR').textContent = avgR;
@@ -1531,7 +1556,7 @@ function updateTable() {
             { value: t.pereche, class: '' },
             { value: t.sesiune, class: '' },
             { value: t.position, class: t.position === 'Long' ? 'long' : 'short' },
-            { value: t.wl || '-', class: t.wl === 'Win' ? 'win' : t.wl === 'Loss' ? 'loss' : t.wl === 'Open' ? 'open' : '' },
+            { value: t.wl || '-', class: t.wl === 'Win' ? 'win' : t.wl === 'Loss' ? 'loss' : t.wl === 'Break Even' ? 'break-even' : t.wl === 'Open' ? 'open' : '' },
             { value: t.lotSize || '-', class: '' },
             { value: t.r || '-', class: '' },
             { value: t.risk, class: '' },
@@ -1637,6 +1662,7 @@ function editTrade(i) {
     document.getElementById('exitHour').value = convertToTimeFormat(trade.exitHour) || '';
     document.getElementById('sl').value = trade.sl || '';
     document.getElementById('tp').value = trade.tp || '';
+    document.getElementById('profitOverride').value = ''; // Clear override, will show calculated value
     
     // Populate partial closes if they exist
     if (trade.partialCloses) {
