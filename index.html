@@ -546,7 +546,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="pc1_profit">Profit ($)</label>
-                                <input type="number" step="0.01" id="pc1_profit" placeholder="Calculat automat" readonly style="background: rgba(0, 204, 136, 0.1);">
+                                <input type="number" step="0.01" id="pc1_profit" placeholder="ex: 35.00" onchange="calculatePartialCloses()">
                             </div>
                         </div>
                     </div>
@@ -565,7 +565,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="pc2_profit">Profit ($)</label>
-                                <input type="number" step="0.01" id="pc2_profit" placeholder="Calculat automat" readonly style="background: rgba(0, 204, 136, 0.1);">
+                                <input type="number" step="0.01" id="pc2_profit" placeholder="ex: 45.00" onchange="calculatePartialCloses()">
                             </div>
                         </div>
                     </div>
@@ -584,7 +584,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="pc3_profit">Profit ($)</label>
-                                <input type="number" step="0.01" id="pc3_profit" placeholder="Calculat automat" readonly style="background: rgba(0, 204, 136, 0.1);">
+                                <input type="number" step="0.01" id="pc3_profit" placeholder="ex: 50.00" onchange="calculatePartialCloses()">
                             </div>
                         </div>
                     </div>
@@ -747,7 +747,6 @@
                             <th>Duration</th>
                             <th>SL</th>
                             <th>EXIT</th>
-                            <th>Pips</th>
                             <th>Screenshot</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -824,20 +823,10 @@ function showPage(page) {
 document.getElementById('entryHour').addEventListener('change', calculateDuration);
 document.getElementById('exitHour').addEventListener('change', calculateDuration);
 
-// Auto-calculate Partial Close profits
-['pc1', 'pc2', 'pc3'].forEach(prefix => {
-    document.getElementById(`${prefix}_lot`).addEventListener('input', calculatePartialCloses);
-    document.getElementById(`${prefix}_price`).addEventListener('input', calculatePartialCloses);
-});
-document.getElementById('entry').addEventListener('input', calculatePartialCloses);
-document.getElementById('position').addEventListener('change', calculatePartialCloses);
-document.getElementById('pereche').addEventListener('input', calculatePartialCloses);
+// Update partial close totals when lot size changes
 document.getElementById('lotSize').addEventListener('input', calculatePartialCloses);
 
 function calculatePartialCloses() {
-    const entry = parseFloat(document.getElementById('entry').value) || 0;
-    const position = document.getElementById('position').value;
-    const pereche = document.getElementById('pereche').value;
     const lotSize = parseFloat(document.getElementById('lotSize').value) || 0;
     
     let totalPartialProfit = 0;
@@ -846,15 +835,11 @@ function calculatePartialCloses() {
     ['pc1', 'pc2', 'pc3'].forEach(prefix => {
         const lot = parseFloat(document.getElementById(`${prefix}_lot`).value) || 0;
         const price = parseFloat(document.getElementById(`${prefix}_price`).value) || 0;
+        const profit = parseFloat(document.getElementById(`${prefix}_profit`).value) || 0;
         
-        if (lot > 0 && price > 0 && entry > 0) {
-            // Calculate profit for this partial close
-            const profit = calculatePartialProfit(entry, price, lot, position, pereche);
-            document.getElementById(`${prefix}_profit`).value = profit.toFixed(2);
+        if (lot > 0) {
             totalPartialProfit += profit;
             totalLotsExited += lot;
-        } else {
-            document.getElementById(`${prefix}_profit`).value = '';
         }
     });
     
@@ -863,47 +848,38 @@ function calculatePartialCloses() {
     document.getElementById('lotRemaining').textContent = (lotSize - totalLotsExited).toFixed(2);
 }
 
-function calculatePartialProfit(entry, exitPrice, lot, position, pair) {
-    if (!entry || !exitPrice || !lot) return 0;
+function calculatePartialProfit(entry, exitPrice, lot, position, pair, totalLotSize, risk) {
+    if (!entry || !exitPrice || !lot || !totalLotSize || !risk) return 0;
     
     const entryPrice = parseFloat(entry);
     const exit = parseFloat(exitPrice);
     const lotAmount = parseFloat(lot);
+    const totalLot = parseFloat(totalLotSize);
+    const riskAmount = parseFloat(risk);
     
-    // Get pip value for the pair
-    const pipValue = getPipValue(pair || '');
+    // Calculate R for this specific exit
+    // R = (Exit - Entry) / (Entry - SL) for Long
+    // R = (Entry - Exit) / (SL - Entry) for Short
     
-    // Calculate pips
-    let pips = 0;
+    // We need to calculate how many R this exit represents
+    // Simplified: calculate profit ratio based on price movement
+    let priceMove = 0;
     if (position === 'Long') {
-        pips = (exit - entryPrice) / pipValue;
+        priceMove = exit - entryPrice;
     } else if (position === 'Short') {
-        pips = (entryPrice - exit) / pipValue;
+        priceMove = entryPrice - exit;
     }
     
-    // Calculate profit based on instrument type
-    let profitPerLot = 0;
-    const pairUpper = (pair || '').toUpperCase();
+    // For partial close, we need to know the SL distance to calculate R
+    // Since we don't have SL here, we'll use a simplified approach:
+    // Profit = (lot / totalLot) × risk × (price ratio)
+    // This is a simplified calculation - user should enter actual profit in the field
     
-    if (pairUpper.includes('XAU') || pairUpper.includes('GOLD')) {
-        // Gold: $1 per 0.01 lot per $1 move
-        // For 0.01 lot, 1 pip ($0.10 move) = $1 profit
-        profitPerLot = pips * 0.10 * (lotAmount / 0.01);
-    } else if (pairUpper.includes('XAG') || pairUpper.includes('SILVER')) {
-        // Silver: Similar calculation
-        profitPerLot = pips * 0.01 * (lotAmount / 0.01);
-    } else if (pairUpper.includes('US30') || pairUpper.includes('US100') || pairUpper.includes('NAS100') || 
-               pairUpper.includes('SPX500') || pairUpper.includes('GER40') || pairUpper.includes('UK100')) {
-        // Indices: For indices, 1 lot = $1 per point
-        // US100: 1 point move with 1 lot = $1
-        profitPerLot = pips * lotAmount;
-    } else {
-        // Forex: Standard calculation - $10 per pip per standard lot (1.0)
-        // For 0.01 lot (micro lot): $10 * 0.01 = $0.10 per pip
-        profitPerLot = pips * 10 * lotAmount;
-    }
+    const lotRatio = lotAmount / totalLot;
     
-    return profitPerLot;
+    // Return an estimated profit based on lot ratio and price movement percentage
+    // This is just a placeholder - the actual profit should be entered by the user
+    return 0; // Return 0, let user manually enter the profit
 }
 
 function calculateDuration() {
@@ -1158,41 +1134,26 @@ function getFormData() {
         }
     });
     
-    // Calculate pips (use EXIT if available, otherwise use SL)
-    const exitPrice = tp || sl;
-    const pips = calculatePips(entry, exitPrice, position, pereche);
-    
     // Calculate R if TP is provided
     const r = tp ? calculateR(entry, sl, tp, position) : 0;
     
-    // Calculate final profit
+    // Calculate final profit based on R
     let finalProfit = 0;
     
-    if (wl === 'Win' || wl === 'Loss') {
-        // Calculate profit from remaining position
+    if (wl === 'Win') {
+        // Win: Profit = Partial Closes + (Risk × R for remaining position)
         const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
-        
-        if (lotRemaining > 0) {
-            // Determine exit price: use TP/EXIT if available, otherwise use SL
-            const exitPrice = tp || sl;
-            
-            if (exitPrice) {
-                // Calculate profit for remaining lots at exit price
-                const remainingProfit = calculatePartialProfit(entry, exitPrice, lotRemaining, position, pereche);
-                finalProfit = totalPartialProfit + remainingProfit;
-            } else if (wl === 'Loss') {
-                // If no exit price, use risk amount (negative)
-                const lotRatio = lotRemaining / parseFloat(lotSize);
-                finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
-            } else {
-                finalProfit = totalPartialProfit;
-            }
-        } else {
-            // All lots closed via partial closes
-            finalProfit = totalPartialProfit;
-        }
+        const lotRatio = lotRemaining / parseFloat(lotSize);
+        const remainingProfit = parseFloat(risk) * r * lotRatio;
+        finalProfit = totalPartialProfit + remainingProfit;
+    } else if (wl === 'Loss') {
+        // Loss: Profit = Partial Closes - Risk (for remaining position)
+        const lotRemaining = parseFloat(lotSize) - partialCloses.reduce((sum, pc) => sum + parseFloat(pc.lot), 0);
+        const lotRatio = lotRemaining / parseFloat(lotSize);
+        finalProfit = totalPartialProfit - (parseFloat(risk) * lotRatio);
     } else if (wl === 'Open') {
-        finalProfit = totalPartialProfit; // Only count partial closes for open trades
+        // Open: Only count partial closes
+        finalProfit = totalPartialProfit;
     }
 
     return {
@@ -1214,8 +1175,7 @@ function getFormData() {
         exitHour: exitHour,
         duration: duration,
         sl: sl,
-        tp: tp,
-        pips: pips
+        tp: tp
     };
 }
 
@@ -1225,7 +1185,7 @@ function loadTradesFromSheet() {
     isLoading = true;
 
     tradesBody.innerHTML =
-        '<tr><td colspan="21" class="loading">Se încarcă datele...</td></tr>';
+        '<tr><td colspan="20" class="loading">Se încarcă datele...</td></tr>';
 
     fetch(GOOGLE_SCRIPT_URL + '?action=get')
         .then(r => r.json())
@@ -1245,7 +1205,7 @@ function loadTradesFromSheet() {
             console.error(err);
             isLoading = false;
             tradesBody.innerHTML =
-                '<tr><td colspan="21" class="no-data">Eroare la încărcare</td></tr>';
+                '<tr><td colspan="20" class="no-data">Eroare la încărcare</td></tr>';
         });
 }
 
@@ -1319,7 +1279,7 @@ function updateDashboard() {
 function updateTable() {
     if (!filteredTrades.length) {
         tradesBody.innerHTML =
-            '<tr><td colspan="21" class="no-data">Nu există tranzacții</td></tr>';
+            '<tr><td colspan="20" class="no-data">Nu există tranzacții</td></tr>';
         return;
     }
 
@@ -1369,7 +1329,6 @@ function updateTable() {
             { value: t.duration || '-', class: '' },
             { value: t.sl || '-', class: '' },
             { value: t.tp || '-', class: '' },
-            { value: t.pips || '-', class: '' },
             { value: screenshotDisplay, class: '', html: true }
         ];
 
