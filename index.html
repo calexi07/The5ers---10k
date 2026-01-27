@@ -218,6 +218,12 @@
             background: #1a1a1a;
             color: #fff;
         }
+        
+        select:hover {
+            border-color: #4d9fff;
+            background: rgba(77, 159, 255, 0.15);
+            box-shadow: 0 0 15px rgba(77, 159, 255, 0.2);
+        }
 
         .save-btn {
             background: linear-gradient(135deg, #4d9fff, #3d7fff);
@@ -614,18 +620,29 @@
         <!-- Table Page -->
         <div id="tablePage" class="page active">
             <!-- Filters Section -->
-            <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(77, 159, 255, 0.2); border-radius: 15px; padding: 25px; margin-bottom: 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
-                <h2 style="color: #4d9fff; margin-bottom: 20px; font-size: 1.5em;">🔍 Filtre</h2>
-                <div class="form-grid" style="margin-bottom: 15px;">
+            <div style="background: linear-gradient(135deg, rgba(77, 159, 255, 0.08), rgba(61, 127, 255, 0.03)); backdrop-filter: blur(10px); border: 1px solid rgba(77, 159, 255, 0.25); border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h2 style="color: #4d9fff; margin: 0; font-size: 1.5em; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.2em;">🔍</span> Filtre
+                    </h2>
+                    <button onclick="resetFilters()" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: #fff; border: none; padding: 12px 28px; border-radius: 25px; cursor: pointer; font-size: 0.95em; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); display: flex; align-items: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 107, 107, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 107, 107, 0.3)'">
+                        <span>🔄</span> Resetează Filtre
+                    </button>
+                </div>
+                <div class="form-grid" style="margin-bottom: 0; gap: 20px;">
                     <div class="form-group">
-                        <label for="filterMonth">Lună</label>
-                        <select id="filterMonth" onchange="applyFilters()">
+                        <label for="filterMonth" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>📅</span> Lună
+                        </label>
+                        <select id="filterMonth" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate lunile</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterDay">Zi</label>
-                        <select id="filterDay" onchange="applyFilters()">
+                        <label for="filterDay" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>📆</span> Zi
+                        </label>
+                        <select id="filterDay" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate zilele</option>
                             <option value="Monday">Monday</option>
                             <option value="Tuesday">Tuesday</option>
@@ -635,8 +652,10 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterSession">Sesiune</label>
-                        <select id="filterSession" onchange="applyFilters()">
+                        <label for="filterSession" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>🌍</span> Sesiune
+                        </label>
+                        <select id="filterSession" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate sesiunile</option>
                             <option value="Asia">Asia</option>
                             <option value="London">London</option>
@@ -644,22 +663,28 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterPair">Pereche</label>
-                        <select id="filterPair" onchange="applyFilters()">
+                        <label for="filterPair" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>💱</span> Pereche
+                        </label>
+                        <select id="filterPair" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate perechile</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterPosition">Long/Short</label>
-                        <select id="filterPosition" onchange="applyFilters()">
+                        <label for="filterPosition" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>📊</span> Long/Short
+                        </label>
+                        <select id="filterPosition" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate pozițiile</option>
                             <option value="Long">Long</option>
                             <option value="Short">Short</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterStatus">Status</label>
-                        <select id="filterStatus" onchange="applyFilters()">
+                        <label for="filterStatus" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                            <span>✅</span> Status
+                        </label>
+                        <select id="filterStatus" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
                             <option value="">Toate statusurile</option>
                             <option value="Win">Win</option>
                             <option value="Loss">Loss</option>
@@ -667,9 +692,6 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="resetFilters()" style="background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s ease;">
-                    🔄 Resetează Filtre
-                </button>
             </div>
 
             <!-- Dashboard Statistics -->
@@ -678,13 +700,8 @@
                 <div class="stats-grid">
                     <div class="stat-card" style="background: linear-gradient(135deg, rgba(77, 159, 255, 0.1), rgba(61, 127, 255, 0.05)); border-color: rgba(77, 159, 255, 0.3);">
                         <div class="stat-label">Balanță Inițială</div>
-                        <div class="stat-value" style="color: #4d9fff;">
-                            $<input type="number" id="initialBalanceInput" value="600" step="0.01" 
-                                style="background: transparent; border: none; color: #4d9fff; font-size: 1em; font-weight: bold; width: 120px; text-align: center; outline: none; cursor: pointer;" 
-                                onchange="saveInitialBalance(); updateDashboard();" 
-                                title="Click pentru a edita">
-                        </div>
-                        <div class="stat-subtext">Capital de start (editabil)</div>
+                        <div class="stat-value" style="color: #4d9fff;">$600.00</div>
+                        <div class="stat-subtext">Capital de start</div>
                     </div>
                     <div class="stat-card" id="statCurrentBalanceCard">
                         <div class="stat-label">Balanță Actuală</div>
@@ -1228,8 +1245,8 @@ function updateDashboard() {
         ? ((wins.length / closedTrades.length) * 100).toFixed(1)
         : 0;
     
-    // Get initial balance
-    const initialBalance = parseFloat(document.getElementById('initialBalanceInput').value) || 600;
+    // Get initial balance (fixed at 600)
+    const initialBalance = 600;
     
     // Calculate current balance
     const currentBalance = initialBalance + totalProfit;
@@ -1309,10 +1326,29 @@ function updateTable() {
             screenshotDisplay = `<a href="${t.tv}" target="_blank" style="color: #4d9fff; text-decoration: none;">📸 View</a>`;
         }
         
+        // Format date as dd/mm/yyyy
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        
+        // Format time as HH:MM
+        const formatTime = (timeStr) => {
+            if (!timeStr) return '-';
+            // If already in HH:MM format, return as is
+            if (timeStr.includes(':') && timeStr.length <= 5) return timeStr;
+            // Otherwise try to parse and format
+            return timeStr;
+        };
+        
         // Create cells with appropriate styling
         const cells = [
             { value: t.luna, class: '' },
-            { value: t.data, class: '' },
+            { value: formatDate(t.data), class: '' },
             { value: t.zi, class: '' },
             { value: t.pereche, class: '' },
             { value: t.sesiune, class: '' },
@@ -1324,8 +1360,8 @@ function updateTable() {
             { value: t.profit || '-', class: '' },
             { value: partialClosesDisplay, class: '', html: true },
             { value: t.entry || '-', class: '' },
-            { value: t.entryHour || '-', class: '' },
-            { value: t.exitHour || '-', class: '' },
+            { value: formatTime(t.entryHour), class: '' },
+            { value: formatTime(t.exitHour), class: '' },
             { value: t.duration || '-', class: '' },
             { value: t.sl || '-', class: '' },
             { value: t.tp || '-', class: '' },
@@ -1483,22 +1519,8 @@ function clearForm() {
     editingIndex = -1;
 }
 
-// Save/Load Initial Balance
-function saveInitialBalance() {
-    const balance = document.getElementById('initialBalanceInput').value;
-    localStorage.setItem('tradingJournalInitialBalance', balance);
-}
-
-function loadInitialBalance() {
-    const savedBalance = localStorage.getItem('tradingJournalInitialBalance');
-    if (savedBalance) {
-        document.getElementById('initialBalanceInput').value = savedBalance;
-    }
-}
-
 // INIT
 window.onload = () => {
-    loadInitialBalance();
     loadTradesFromSheet();
 };
 </script>
