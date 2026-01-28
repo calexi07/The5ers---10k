@@ -766,13 +766,41 @@
                 </div>
             </div>
 
+            <!-- Initial Balance Settings -->
+            <div style="background: linear-gradient(135deg, rgba(77, 159, 255, 0.08), rgba(61, 127, 255, 0.03)); backdrop-filter: blur(10px); border: 1px solid rgba(77, 159, 255, 0.25); border-radius: 20px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+                <h3 style="color: #4d9fff; margin-bottom: 20px; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
+                    <span>💰</span> Setare Balanță Inițială Backtest
+                </h3>
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <label for="initialBalanceInput" style="display: block; color: #4d9fff; margin-bottom: 8px; font-weight: 600; font-size: 0.95em;">
+                            Balanță Inițială ($)
+                        </label>
+                        <input type="number" id="initialBalanceInput" step="0.01" placeholder="600" 
+                               style="width: 100%; padding: 14px; background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; color: #fff; font-size: 1.1em; font-weight: bold; transition: all 0.3s ease;"
+                               onchange="saveInitialBalance(); updateDashboard();"
+                               onfocus="this.style.borderColor='#4d9fff'; this.style.background='rgba(77, 159, 255, 0.15)'"
+                               onblur="this.style.borderColor='rgba(77, 159, 255, 0.3)'; this.style.background='rgba(77, 159, 255, 0.1)'">
+                    </div>
+                    <button onclick="saveInitialBalance(); updateDashboard();" 
+                            style="background: linear-gradient(135deg, #00cc88, #00aa72); color: #fff; border: none; padding: 14px 30px; border-radius: 12px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 204, 136, 0.3); margin-top: 28px;"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 204, 136, 0.4)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 204, 136, 0.3)'">
+                        💾 Salvează
+                    </button>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 12px; font-size: 0.9em; margin-bottom: 0;">
+                    Setează valoarea inițială pentru sesiunea de backtest. Această valoare este independentă de jurnalul live.
+                </p>
+            </div>
+
             <!-- Dashboard Statistics -->
             <div class="dashboard">
                 <h2>📊 Statistici Trading</h2>
                 <div class="stats-grid">
                     <div class="stat-card" style="background: linear-gradient(135deg, rgba(77, 159, 255, 0.1), rgba(61, 127, 255, 0.05)); border-color: rgba(77, 159, 255, 0.3);">
                         <div class="stat-label">Balanță Inițială</div>
-                        <div class="stat-value" style="color: #4d9fff;">$600.00</div>
+                        <div class="stat-value" id="statInitialBalance" style="color: #4d9fff;">$600.00</div>
                         <div class="stat-subtext">Capital de start</div>
                     </div>
                     <div class="stat-card" id="statCurrentBalanceCard">
@@ -1478,8 +1506,12 @@ function updateDashboard() {
         ? ((wins.length / totalWinLoss) * 100).toFixed(1)
         : 0;
     
-    // Get initial balance (fixed at 600)
-    const initialBalance = 600;
+    // Get initial balance from input or use default 600
+    const initialBalanceInput = document.getElementById('initialBalanceInput');
+    const initialBalance = parseFloat(initialBalanceInput.value) || 600;
+    
+    // Update initial balance display in dashboard
+    document.getElementById('statInitialBalance').textContent = `$${initialBalance.toFixed(2)}`;
     
     // Calculate current balance
     const currentBalance = initialBalance + totalProfit;
@@ -1857,8 +1889,29 @@ function clearForm() {
     editingIndex = -1;
 }
 
+// Save/Load Initial Balance for Backtest
+function saveInitialBalance() {
+    const balance = document.getElementById('initialBalanceInput').value;
+    if (balance && parseFloat(balance) > 0) {
+        localStorage.setItem('backtestInitialBalance', balance);
+        alert(`Balanță inițială backtest salvată: $${parseFloat(balance).toFixed(2)}`);
+    } else {
+        alert('Te rog introduce o valoare validă pentru balanța inițială.');
+    }
+}
+
+function loadInitialBalance() {
+    const savedBalance = localStorage.getItem('backtestInitialBalance');
+    if (savedBalance) {
+        document.getElementById('initialBalanceInput').value = savedBalance;
+    } else {
+        document.getElementById('initialBalanceInput').value = 600; // Default
+    }
+}
+
 // INIT
 window.onload = () => {
+    loadInitialBalance();
     loadTradesFromSheet();
 };
 </script>
