@@ -912,11 +912,9 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgfjNnriUwOF
 
 let trades = [];
 let filteredTrades = [];
-let backtestTrades = [];
-let filteredBacktestTrades = [];
 let editingIndex = -1;
 let isLoading = false;
-let currentSheet = 'Backtest'; // 'Sheet1' or 'Backtest'
+let currentSheet = 'Backtest'; // Backtest sheet
 
 // Active filters
 let activeFilters = {
@@ -1439,13 +1437,8 @@ function loadTradesFromSheet() {
             isLoading = false;
             hideLoading();
             if (res.result === 'success') {
-                if (currentSheet === 'Backtest') {
-                    backtestTrades = res.data || [];
-                    filteredBacktestTrades = [...backtestTrades];
-                } else {
-                    trades = res.data || [];
-                    filteredTrades = [...trades];
-                }
+                trades = res.data || [];
+                filteredTrades = [...trades];
                 populateFilterDropdowns();
                 sortFilteredTrades();
                 updateSortIndicators();
@@ -1792,7 +1785,7 @@ function editTrade(i) {
 function deleteTrade(i) {
     if (!confirm('Ștergi tranzacția?')) return;
     showLoading();
-    fetch(`${GOOGLE_SCRIPT_URL}?action=delete&id=${trades[i].id}`)
+    fetch(`${GOOGLE_SCRIPT_URL}?action=delete&sheet=${currentSheet}&id=${trades[i].id}`)
         .then(() => {
             hideLoading();
             loadTradesFromSheet();
@@ -1807,7 +1800,7 @@ function deleteTrade(i) {
 // ADD / UPDATE
 function addTradeToSheet(trade) {
     showLoading();
-    const qs = new URLSearchParams({ action: 'add', ...trade });
+    const qs = new URLSearchParams({ action: 'add', sheet: currentSheet, ...trade });
     fetch(GOOGLE_SCRIPT_URL + '?' + qs)
         .then(() => {
             hideLoading();
@@ -1824,7 +1817,7 @@ function addTradeToSheet(trade) {
 
 function updateTradeInSheet(trade) {
     showLoading();
-    const qs = new URLSearchParams({ action: 'update', ...trade });
+    const qs = new URLSearchParams({ action: 'update', sheet: currentSheet, ...trade });
     fetch(GOOGLE_SCRIPT_URL + '?' + qs)
         .then(() => {
             hideLoading();
