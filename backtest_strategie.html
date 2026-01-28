@@ -491,7 +491,13 @@
                 </button>
             </a>
             <button class="nav-btn active" id="btnTable">Backtest Journal</button>
-            <button class="nav-btn" id="btnForm">Record Trade</button>
+            <button class="nav-btn" id="btnForm" style="display: none;">Record Trade</button>
+            <button class="nav-btn" id="btnLogin" style="background: linear-gradient(135deg, #00cc88, #00aa72); border-color: rgba(0, 204, 136, 0.3);">
+                🔐 Login
+            </button>
+            <button class="nav-btn" id="btnLogout" style="display: none; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); border-color: rgba(255, 107, 107, 0.3);">
+                🚪 Logout
+            </button>
         </div>
 
         <!-- Form Page -->
@@ -776,7 +782,7 @@
             </div>
 
             <!-- Initial Balance Settings -->
-            <div style="background: linear-gradient(135deg, rgba(77, 159, 255, 0.08), rgba(61, 127, 255, 0.03)); backdrop-filter: blur(10px); border: 1px solid rgba(77, 159, 255, 0.25); border-radius: 20px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+            <div id="initialBalanceSection" style="display: none; background: linear-gradient(135deg, rgba(77, 159, 255, 0.08), rgba(61, 127, 255, 0.03)); backdrop-filter: blur(10px); border: 1px solid rgba(77, 159, 255, 0.25); border-radius: 20px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
                 <h3 style="color: #4d9fff; margin-bottom: 20px; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
                     <span>💰</span> Setare Initial Balance Backtest
                 </h3>
@@ -937,6 +943,35 @@
     </div>
 
     <!-- Loading Overlay -->
+    <!-- Login Modal -->
+    <div class="loading-overlay" id="loginModal" style="display: none;">
+        <div class="loading-spinner" style="background: rgba(255, 255, 255, 0.98); padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); max-width: 400px; width: 90%;">
+            <h2 style="color: #4d9fff; margin-bottom: 25px; text-align: center;">🔐 Login Required</h2>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #333; margin-bottom: 8px; font-weight: 600;">Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter username" 
+                       style="width: 100%; padding: 12px; border: 2px solid #4d9fff; border-radius: 8px; font-size: 1em; color: #333;">
+            </div>
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; color: #333; margin-bottom: 8px; font-weight: 600;">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" 
+                       style="width: 100%; padding: 12px; border: 2px solid #4d9fff; border-radius: 8px; font-size: 1em; color: #333;"
+                       onkeypress="if(event.key==='Enter') attemptLogin()">
+            </div>
+            <div id="loginError" style="color: #ff4444; margin-bottom: 15px; text-align: center; display: none; font-weight: 600;"></div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="attemptLogin()" 
+                        style="flex: 1; background: linear-gradient(135deg, #00cc88, #00aa72); color: #fff; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600;">
+                    Login
+                </button>
+                <button onclick="closeLoginModal()" 
+                        style="flex: 1; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: #fff; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="loading-overlay active" id="loadingOverlay">
         <div class="loading-spinner">
             <div class="spinner"></div>
@@ -952,6 +987,13 @@ let filteredTrades = [];
 let editingIndex = -1;
 let isLoading = false;
 let currentSheet = 'Backtest'; // Backtest sheet
+
+// Login system (shared with live journal)
+let isLoggedIn = false;
+const CREDENTIALS = {
+    username: 'Cristian',
+    password: 'Alessio07'
+};
 
 // Active filters
 let activeFilters = {
@@ -986,6 +1028,8 @@ function hideLoading() {
 }
 
 // NAV
+btnLogin.onclick = () => showLoginModal();
+btnLogout.onclick = () => logout();
 btnForm.onclick = () => showPage('form');
 btnTable.onclick = () => {
     showPage('table');
@@ -1702,14 +1746,18 @@ function updateTable() {
         });
 
         const actions = document.createElement('td');
-        actions.innerHTML = `
-            <button class="delete-btn">Delete</button>
-            <button class="edit-btn">Edit</button>
-        `;
-        // Find original index in trades array
-        const originalIndex = trades.findIndex(trade => trade.id === t.id);
-        actions.children[0].onclick = () => deleteTrade(originalIndex);
-        actions.children[1].onclick = () => editTrade(originalIndex);
+        if (isLoggedIn) {
+            actions.innerHTML = `
+                <button class="delete-btn">Delete</button>
+                <button class="edit-btn">Edit</button>
+            `;
+            // Find original index in trades array
+            const originalIndex = trades.findIndex(trade => trade.id === t.id);
+            actions.children[0].onclick = () => deleteTrade(originalIndex);
+            actions.children[1].onclick = () => editTrade(originalIndex);
+        } else {
+            actions.innerHTML = `<span style="color: rgba(255,255,255,0.5);">-</span>`;
+        }
         tr.appendChild(actions);
 
         tradesBody.appendChild(tr);
@@ -1874,6 +1922,66 @@ function updateTradeInSheet(trade) {
         });
 }
 
+// LOGIN SYSTEM
+function showLoginModal() {
+    document.getElementById('loginModal').style.display = 'flex';
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('loginUsername').focus();
+}
+
+function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+
+function attemptLogin() {
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+    
+    if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+        isLoggedIn = true;
+        localStorage.setItem('tradingJournalAuth', 'true');
+        closeLoginModal();
+        updateUIForLogin();
+        alert('Login successful! Welcome, ' + username);
+    } else {
+        errorDiv.textContent = 'Invalid username or password';
+        errorDiv.style.display = 'block';
+        document.getElementById('loginPassword').value = '';
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        isLoggedIn = false;
+        localStorage.removeItem('tradingJournalAuth');
+        updateUIForLogin();
+        showPage('table');
+        alert('Logged out successfully');
+    }
+}
+
+function updateUIForLogin() {
+    // Show/hide buttons based on login state
+    document.getElementById('btnForm').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('btnLogin').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.getElementById('btnLogout').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('initialBalanceSection').style.display = isLoggedIn ? 'block' : 'none';
+    
+    // Refresh table to show/hide Edit/Delete buttons
+    updateTable();
+}
+
+function checkAuth() {
+    const auth = localStorage.getItem('tradingJournalAuth');
+    if (auth === 'true') {
+        isLoggedIn = true;
+        updateUIForLogin();
+    }
+}
+
 // UTILS
 function clearForm() {
     // Clear standard fields
@@ -1920,6 +2028,7 @@ function loadInitialBalance() {
 
 // INIT
 window.onload = () => {
+    checkAuth();
     loadInitialBalance();
     loadTradesFromSheet();
 };
