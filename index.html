@@ -487,6 +487,9 @@
         <div class="nav-buttons">
             <button class="nav-btn active" id="btnTable">Trading Journal</button>
             <button class="nav-btn" id="btnForm" style="display: none;">Add Trade</button>
+            <button class="nav-btn" id="btnStrategy" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); border-color: rgba(156, 39, 176, 0.3);">
+                📚 Strategy
+            </button>
             <button class="nav-btn" id="btnLogin" style="background: linear-gradient(135deg, #00cc88, #00aa72); border-color: rgba(0, 204, 136, 0.3);">
                 🔐 Login
             </button>
@@ -557,15 +560,6 @@
                             <option value="Asia">Asia</option>
                             <option value="London">London</option>
                             <option value="New York">New York</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="strategy">Strategy *</label>
-                        <select id="strategy">
-                            <option value="">Select strategy</option>
-                            <option value="Daily S/D">Daily S/D</option>
-                            <option value="4H S/D">4H S/D</option>
-                            <option value="Liquidity">Liquidity</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -755,17 +749,6 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterStrategy" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
-                            <span>🎯</span> Strategy
-                        </label>
-                        <select id="filterStrategy" onchange="applyFilters()" style="background: rgba(77, 159, 255, 0.1); border: 1.5px solid rgba(77, 159, 255, 0.3); border-radius: 12px; padding: 14px; color: #fff; font-size: 1em; transition: all 0.3s ease; cursor: pointer;">
-                            <option value="">All strategies</option>
-                            <option value="Daily S/D">Daily S/D</option>
-                            <option value="4H S/D">4H S/D</option>
-                            <option value="Liquidity">Liquidity</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="filterPosition" style="color: #4d9fff; margin-bottom: 10px; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
                             <span>📊</span> Long/Short
                         </label>
@@ -872,9 +855,6 @@
                             <th onclick="sortTable('sesiune')" style="cursor: pointer; user-select: none;">
                                 Session <span id="sort-sesiune"></span>
                             </th>
-                            <th onclick="sortTable('strategy')" style="cursor: pointer; user-select: none;">
-                                Strategy <span id="sort-strategy"></span>
-                            </th>
                             <th onclick="sortTable('position')" style="cursor: pointer; user-select: none;">
                                 Long/Short <span id="sort-position"></span>
                             </th>
@@ -918,7 +898,7 @@
                     </thead>
                     <tbody id="tradesBody">
                         <tr>
-                            <td colspan="21" class="no-data">Loading data...</td>
+                            <td colspan="20" class="no-data">Loading data...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -950,6 +930,85 @@
                 <button onclick="closeLoginModal()" 
                         style="flex: 1; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: #fff; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600;">
                     Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategy Modal -->
+    <div class="loading-overlay" id="strategyModal" style="display: none;">
+        <div style="background: linear-gradient(135deg, rgba(26, 26, 42, 0.98), rgba(15, 30, 58, 0.98)); padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; border: 2px solid rgba(156, 39, 176, 0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="color: #9c27b0; margin: 0; font-size: 2em; display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.2em;">📚</span> Trading Strategy
+                </h2>
+                <button onclick="closeStrategyModal()" style="background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 2px solid #ff6b6b; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='rgba(255, 107, 107, 0.4)'" onmouseout="this.style.background='rgba(255, 107, 107, 0.2)'">
+                    ×
+                </button>
+            </div>
+            
+            <div style="color: #ddd; line-height: 1.8; font-size: 1.05em;">
+                <!-- Strategy Step 1 -->
+                <div style="background: rgba(156, 39, 176, 0.1); border-left: 4px solid #9c27b0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #9c27b0; margin-bottom: 15px; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #9c27b0; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: bold;">1</span>
+                        Daily Fractal - Long Term Direction
+                    </h3>
+                    <p style="margin: 0; color: #ccc;">
+                        Folosesc <strong>Daily Fractal</strong> pentru a identifica direcția long-term a pieței. Dacă fractalul Daily arată o tendință bullish, caut oportunități LONG. Dacă arată bearish, caut oportunități SHORT.
+                    </p>
+                </div>
+
+                <!-- Strategy Step 2 -->
+                <div style="background: rgba(156, 39, 176, 0.1); border-left: 4px solid #9c27b0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #9c27b0; margin-bottom: 15px; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #9c27b0; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: bold;">2</span>
+                        Daily Supply/Demand Zones
+                    </h3>
+                    <p style="margin: 0; color: #ccc;">
+                        Identific zonele cheie de <strong>Supply</strong> (vânzători) și <strong>Demand</strong> (cumpărători) pe timeframe-ul Daily. Acestea reprezintă nivelurile importante unde prețul poate reacționa puternic.
+                    </p>
+                </div>
+
+                <!-- Strategy Step 3 -->
+                <div style="background: rgba(156, 39, 176, 0.1); border-left: 4px solid #9c27b0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #9c27b0; margin-bottom: 15px; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #9c27b0; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: bold;">3</span>
+                        4H Fractal - Confirmation
+                    </h3>
+                    <p style="margin: 0; color: #ccc;">
+                        Aștept confirmarea pe <strong>4H Fractal</strong> înainte de a intra în tranzacție. Acest timeframe oferă confirmarea că mișcarea va continua în direcția identificată pe Daily.
+                    </p>
+                </div>
+
+                <!-- Strategy Step 4 -->
+                <div style="background: rgba(156, 39, 176, 0.1); border-left: 4px solid #9c27b0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #9c27b0; margin-bottom: 15px; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #9c27b0; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: bold;">4</span>
+                        Liquidity Sweep
+                    </h3>
+                    <p style="margin: 0; color: #ccc;">
+                        Caut <strong>Liquidity Sweeps</strong> - momentele când prețul elimină liquidity-ul de pe anumite niveluri (stop-loss-uri ale retailului) înainte de a face mișcarea principală. Acesta este semnalul de intrare ideal.
+                    </p>
+                </div>
+
+                <!-- Risk Management -->
+                <div style="background: rgba(0, 204, 136, 0.1); border-left: 4px solid #00cc88; padding: 20px; border-radius: 10px; margin-bottom: 0;">
+                    <h3 style="color: #00cc88; margin-bottom: 15px; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                        <span>🛡️</span> Risk Management
+                    </h3>
+                    <ul style="margin: 0; padding-left: 25px; color: #ccc;">
+                        <li style="margin-bottom: 10px;"><strong>Risk per trade:</strong> Maximum 1-2% din capital</li>
+                        <li style="margin-bottom: 10px;"><strong>Stop Loss:</strong> Plasat sub/peste zona de Supply/Demand</li>
+                        <li style="margin-bottom: 10px;"><strong>Take Profit:</strong> Minimum 1:2 Risk-Reward Ratio</li>
+                        <li style="margin-bottom: 0;"><strong>Partial Closes:</strong> Exit parțial la niveluri cheie pentru a securiza profit</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="closeStrategyModal()" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); color: #fff; border: none; padding: 14px 40px; border-radius: 25px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(156, 39, 176, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(156, 39, 176, 0.4)'">
+                    Got it! 👍
                 </button>
             </div>
         </div>
@@ -990,7 +1049,6 @@ let activeFilters = {
     day: '',
     session: '',
     pair: '',
-    strategy: '',
     position: '',
     status: ''
 };
@@ -1025,6 +1083,7 @@ btnTable.onclick = () => {
     showPage('table');
     loadTradesFromSheet();
 };
+btnStrategy.onclick = () => showStrategyModal();
 
 function showPage(page) {
     formPage.classList.toggle('active', page === 'form');
@@ -1147,7 +1206,6 @@ function applyFilters() {
     activeFilters.day = document.getElementById('filterDay').value;
     activeFilters.session = document.getElementById('filterSession').value;
     activeFilters.pair = document.getElementById('filterPair').value;
-    activeFilters.strategy = document.getElementById('filterStrategy').value;
     activeFilters.position = document.getElementById('filterPosition').value;
     activeFilters.status = document.getElementById('filterStatus').value;
     
@@ -1156,7 +1214,6 @@ function applyFilters() {
         if (activeFilters.day && trade.zi !== activeFilters.day) return false;
         if (activeFilters.session && trade.sesiune !== activeFilters.session) return false;
         if (activeFilters.pair && trade.pereche !== activeFilters.pair) return false;
-        if (activeFilters.strategy && trade.strategy !== activeFilters.strategy) return false;
         if (activeFilters.position && trade.position !== activeFilters.position) return false;
         if (activeFilters.status && trade.wl !== activeFilters.status) return false;
         return true;
@@ -1221,7 +1278,6 @@ function resetFilters() {
     document.getElementById('filterDay').value = '';
     document.getElementById('filterSession').value = '';
     document.getElementById('filterPair').value = '';
-    document.getElementById('filterStrategy').value = '';
     document.getElementById('filterPosition').value = '';
     document.getElementById('filterStatus').value = '';
     
@@ -1230,7 +1286,6 @@ function resetFilters() {
         day: '',
         session: '',
         pair: '',
-        strategy: '',
         position: '',
         status: ''
     };
@@ -1336,11 +1391,11 @@ saveBtn.onclick = () => {
 };
 
 function getFormData() {
-    const required = ['luna','data','zi','pereche','sesiune','strategy','position','wl','risk','entry','sl','lotSize'];
+    const required = ['luna','data','zi','pereche','sesiune','position','wl','risk','entry','sl','lotSize'];
     for (const id of required) {
         const value = document.getElementById(id).value;
         if (!value || value === '') {
-            alert('Fill in all required fields obligatorii (*): Month, Date, Day, Pair, Session, Strategy, Long/Short, Status, Risk, Entry, SL, Lot Size');
+            alert('Fill in all required fields obligatorii (*): Month, Date, Day, Pair, Session, Long/Short, Status, Risk, Entry, SL, Lot Size');
             return null;
         }
     }
@@ -1359,7 +1414,6 @@ function getFormData() {
     const risk = document.getElementById('risk').value;
     const perecheSelect = document.getElementById('pereche').value;
     const pereche = perecheSelect === 'Alta' ? document.getElementById('customPair').value : perecheSelect;
-    const strategy = document.getElementById('strategy').value;
     const lotSize = document.getElementById('lotSize').value;
     const entryHour = document.getElementById('entryHour').value;
     const exitHour = document.getElementById('exitHour').value;
@@ -1414,7 +1468,6 @@ function getFormData() {
         zi: document.getElementById('zi').value,
         pereche: pereche,
         sesiune: document.getElementById('sesiune').value,
-        strategy: strategy,
         position: position,
         wl: wl,
         lotSize: lotSize,
@@ -1466,7 +1519,7 @@ function loadTradesFromSheet() {
             isLoading = false;
             hideLoading();
             tradesBody.innerHTML =
-                '<tr><td colspan="21" class="no-data">Loading error</td></tr>';
+                '<tr><td colspan="20" class="no-data">Loading error</td></tr>';
         });
 }
 
@@ -1563,7 +1616,7 @@ function updateDashboard() {
 function updateTable() {
     if (!filteredTrades.length) {
         tradesBody.innerHTML =
-            '<tr><td colspan="21" class="no-data">No trades</td></tr>';
+            '<tr><td colspan="20" class="no-data">No trades</td></tr>';
         return;
     }
 
@@ -1623,7 +1676,6 @@ function updateTable() {
             { value: t.zi, class: '' },
             { value: t.pereche, class: '' },
             { value: t.sesiune, class: '' },
-            { value: t.strategy || '-', class: '' },
             { value: t.position, class: t.position === 'Long' ? 'long' : 'short' },
             { value: t.wl || '-', class: t.wl === 'Win' ? 'win' : t.wl === 'Loss' ? 'loss' : t.wl === 'Break Even' ? 'break-even' : t.wl === 'Open' ? 'open' : '' },
             { value: t.lotSize || '-', class: '' },
@@ -1730,7 +1782,6 @@ function editTrade(i) {
     }
     
     document.getElementById('sesiune').value = trade.sesiune || '';
-    document.getElementById('strategy').value = trade.strategy || '';
     document.getElementById('position').value = trade.position || '';
     document.getElementById('wl').value = trade.wl || '';
     document.getElementById('risk').value = trade.risk || '';
@@ -1828,6 +1879,15 @@ function showLoginModal() {
 
 function closeLoginModal() {
     document.getElementById('loginModal').style.display = 'none';
+}
+
+// STRATEGY MODAL
+function showStrategyModal() {
+    document.getElementById('strategyModal').style.display = 'flex';
+}
+
+function closeStrategyModal() {
+    document.getElementById('strategyModal').style.display = 'none';
 }
 
 function attemptLogin() {
