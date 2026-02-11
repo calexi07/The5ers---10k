@@ -1765,7 +1765,7 @@ function updateTable() {
         }
         
         let screenshotDisplay = '-';
-        if (t.tv && t.tv.trim() !== '') {
+        if (t.tv && typeof t.tv === 'string' && t.tv.trim() !== '') {
             screenshotDisplay = `<a href="${t.tv}" target="_blank" rel="noopener noreferrer" style="color: #4d9fff; text-decoration: none;">📸 View</a>`;
         }
         
